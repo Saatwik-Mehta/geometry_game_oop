@@ -1,4 +1,5 @@
 from random import randint
+import turtle
 from typing import Tuple
 
 
@@ -68,22 +69,53 @@ class Rectangle:
         return length * breadth
 
 
+class GuiRectangle(Rectangle):
+    def draw(self, canvas: turtle.Turtle):
+        # relocate the pen to the lower left point
+        canvas.penup()
+        canvas.goto(self.point1.x, self.point1.y)
+        canvas.pendown()
+
+        # start creating the rectangle
+        canvas.forward(self.point2.x - self.point1.x)
+        canvas.left(90)
+        canvas.forward(self.point2.y - self.point1.y)
+        canvas.left(90)
+        canvas.forward(self.point2.x - self.point1.x)
+        canvas.left(90)
+        canvas.forward(self.point2.y - self.point1.y)
+
+
+class GuiPoint(Point):
+    def display_point(self, canvas:turtle.Turtle, size=5, color='red'):
+        # This method will locate the user guessed point on the canvas
+        canvas.penup()
+        canvas.goto(self.x, self.y)
+        canvas.pendown()
+        canvas.dot(size, color)
+
+
 if __name__ == "__main__":
     point1 = Point(3, 4)
     point2 = Point(10, 8)
     print("total distance: ", point1.calculate_distance_from(point2))
 
-    rectangle = Rectangle(
-        Point(randint(0, 9), randint(0, 9)), Point(randint(15, 22), randint(15, 22))
+    rectangle = GuiRectangle(
+        Point(randint(0, 100), randint(0, 100)),
+        Point(randint(100, 200), randint(100, 200)),
     )
     print(
         f"Your Rectangle coordinates are: {rectangle.point1.x}, {rectangle.point1.y} and {rectangle.point2.x}, {rectangle.point2.y}"
     )
-    
-    user_point = Point(
+
+    user_point = GuiPoint(
         float(input("Please enter X coord: ")), float(input("Please enter Y coord: "))
     )
     user_area = float(input("Guess rectangle area: "))
     print("Point falls in rectangle: ", user_point.falls_in_rectangle(rectangle))
     print("Your area was off by: ", rectangle.area() - user_area)
 
+    canvas = turtle.Turtle()
+    rectangle.draw(canvas)
+    user_point.display_point(canvas)
+    turtle.done()
